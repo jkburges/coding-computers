@@ -19,9 +19,23 @@
     </script>
     <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
      var uiConfig = {
-         signInSuccessUrl: '/welcome',
+         callbacks: {
+             signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+                 var user = authResult.user;
+                 var credential = authResult.credential;
+                 var isNewUser = authResult.additionalUserInfo.isNewUser;
+                 var providerId = authResult.additionalUserInfo.providerId;
+                 var operationType = authResult.operationType;
+
+                 console.log(`User signed in: ${user.email}`);
+
+                 $('#welcome-message').text(`Welcome, ${user.email}`)
+                 return false;
+             }
+         },
          signInOptions: [
              firebase.auth.EmailAuthProvider.PROVIDER_ID
          ],
@@ -39,6 +53,8 @@
     <!-- The surrounding HTML is left untouched by FirebaseUI.
          Your app may use that space for branding, controls and other customizations.-->
     <h1>Welcome to My Awesome App</h1>
+
+    <div id="welcome-message">
     <div id="firebaseui-auth-container"></div>
   </body>
 </html>
